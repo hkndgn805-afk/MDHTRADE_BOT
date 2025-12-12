@@ -8,9 +8,10 @@ import time
 # BTC cache
 btc_cache = {"price": None, "time": 0}
 
-def get_btc_price_cached():
+def get_btc_price_safe():
     global btc_cache
     try:
+        # Cache süresi 20 saniye
         if time.time() - btc_cache["time"] > 20 or btc_cache["price"] is None:
             url = "https://api.coingecko.com/api/v3/simple/price"
             params = {"ids": "bitcoin", "vs_currencies": "usd"}
@@ -18,8 +19,12 @@ def get_btc_price_cached():
             response.raise_for_status()
             btc_cache["price"] = response.json()["bitcoin"]["usd"]
             btc_cache["time"] = time.time()
+    except requests.exceptions.HTTPError as e:
+        # 429 veya diğer HTTP hatalarında cache yoksa hatayı göster
+        if btc_cache["price"] is None:
+            raise e
+        # Cache varsa eski fiyatı kullan
     except Exception as e:
-        # Eğer API 429 veya başka hata verirse, eski fiyatı kullan
         if btc_cache["price"] is None:
             raise e
     return btc_cache["price"]
@@ -45,7 +50,7 @@ def greeting(message):
 @bot.message_handler(func=lambda message: message.text and message.text.lower().strip() in ["/btc", "btc"])
 def btc_handler(message):
     try:
-        price_usd = get_btc_price_cached()
+        price_usd = get_btc_price_safe()
         bot.reply_to(
             message,
             f"📈 *Bitcoin (BTC)*\n💰 Fiyat: *${price_usd}*",
