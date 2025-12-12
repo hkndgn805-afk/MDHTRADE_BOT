@@ -46,7 +46,7 @@ def btc_handler(message):
         bot.reply_to(message, f"⚠️ Fiyat alınamadı.\nHata: {str(e)}")
 
 # Selamlaşma
-@bot.message_handler(func=lambda message: message.text and message.text.lower().strip() in ["merhaba", "selam", "hello"])
+@bot.message_handler(func=lambda message: message.text and message.text.lower().strip() in ["merhaba", "selam", "naber"])
 def greeting(message):
     bot.reply_to(message, "👋 Merhaba! Sana piyasa verileri sunabilirim.")
 
