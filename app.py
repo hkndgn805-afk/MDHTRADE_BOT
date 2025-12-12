@@ -13,33 +13,30 @@ app = Flask(__name__)
 def start(message):
     bot.reply_to(
         message,
-        "🤖 MDH Trade Bot'a hoş geldin!\n\nKomutlar:\n/start\n/btc\n/help"
+        "🤖 MDH Trade Bot aktif!\n\nKomutlar:\n/btc\n/help"
     )
 
-# /help
-@bot.message_handler(commands=['help'])
-def help_cmd(message):
-    bot.reply_to(
-        message,
-        "📌 Kullanılabilir komutlar:\n\n/btc → BTC fiyatı\n/eth → ETH fiyatı"
-    )
+# /btc komutu
+@bot.message_handler(commands=['btc'])
+def btc_command(message):
+    bot.reply_to(message, "📈 BTC fiyatı yakında canlı olarak gelecek!")
 
-# Anahtar kelime: merhaba, selam
-@bot.message_handler(func=lambda message: message.text.lower() in ["merhaba", "selam", "hello"])
-def greeting(message):
-    bot.reply_to(message, "👋 Merhaba! Sana piyasa verileri sunabilirim 📊")
-
-# BTC yazılırsa
-@bot.message_handler(func=lambda message: "btc" in message.text.lower())
+# BTC kelimesi yazılırsa
+@bot.message_handler(func=lambda message: message.text and message.text.lower() == "btc")
 def btc_text(message):
-    bot.reply_to(message, "📈 BTC fiyatını istiyorsun. Yakında canlı veri gelecek!")
+    bot.reply_to(message, "📈 BTC yazdın. Canlı veri hazırlanıyor!")
 
-# Fallback – anlamazsa
+# Selamlaşma
+@bot.message_handler(func=lambda message: message.text and message.text.lower() in ["merhaba", "selam", "hello"])
+def greeting(message):
+    bot.reply_to(message, "👋 Merhaba! Sana piyasa verileri sunabilirim.")
+
+# Fallback (EN SONDA!)
 @bot.message_handler(func=lambda message: True)
 def fallback(message):
     bot.reply_to(
         message,
-        "🤖 Bunu anlayamadım.\n\nKomutlar:\n/start\n/btc\n/help"
+        "🤖 Komutu anlayamadım.\n\nKullanılabilir:\n/btc\n/help"
     )
 
 def run_bot():
