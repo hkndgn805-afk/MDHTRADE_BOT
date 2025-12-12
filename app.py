@@ -40,13 +40,7 @@ def btc_price(message):
         )
     except:
         bot.reply_to(message, "⚠️ Fiyat alınamadı, tekrar dene.")
-
-
-# BTC kelimesi yazılırsa
-@bot.message_handler(func=lambda message: message.text and message.text.lower() == "btc")
-def btc_text(message):
-    bot.reply_to(message, "📈 BTC yazdın. Canlı veri hazırlanıyor!")
-
+        
 # Selamlaşma
 @bot.message_handler(func=lambda message: message.text and message.text.lower() in ["merhaba", "selam", "hello"])
 def greeting(message):
