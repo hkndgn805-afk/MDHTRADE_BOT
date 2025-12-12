@@ -22,3 +22,9 @@ def home():
 if __name__ == "__main__":
     threading.Thread(target=run_bot).start()
     app.run(host="0.0.0.0", port=10000)
+@bot.message_handler(func=lambda message: True)
+def all_messages(message):
+    bot.reply_to(
+        message,
+        "🤖 MDH Trade Bot çalışıyor!\n\nKomutlar:\n/start\n/btc"
+    )
