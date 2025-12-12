@@ -25,8 +25,8 @@ def start(message):
     )
 
 # Sadece "btc" yazılırsa
-@bot.message_handler(func=lambda message: message.text and message.text.lower() == "btc")
-def btc_text(message):
+@bot.message_handler(func=lambda message: message.text and message.text.lower() in ["/btc", "btc"])
+def btc_handler(message):
     try:
         price_usd = get_btc_price_usd()
         bot.reply_to(
@@ -36,6 +36,7 @@ def btc_text(message):
         )
     except Exception as e:
         bot.reply_to(message, f"⚠️ Fiyat alınamadı.\nHata: {str(e)}")
+
 
 # Selamlaşma
 @bot.message_handler(func=lambda message: message.text and message.text.lower() in ["merhaba", "selam", "hello"])
