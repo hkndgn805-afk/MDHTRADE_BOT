@@ -8,17 +8,38 @@ BOT_TOKEN = os.environ.get("BOT_TOKEN")
 bot = telebot.TeleBot(BOT_TOKEN)
 app = Flask(__name__)
 
-# /start komutu
+# /start
 @bot.message_handler(commands=['start'])
 def start(message):
-    bot.reply_to(message, "🤖 MDH Trade Bot çalışıyor!")
-
-# HER MESAJ (merhaba, selam, vs.)
-@bot.message_handler(func=lambda message: True)
-def all_messages(message):
     bot.reply_to(
         message,
-        "👋 Merhaba!\n\n🤖 MDH Trade Bot aktif.\n\nKomutlar:\n/start\n/btc"
+        "🤖 MDH Trade Bot'a hoş geldin!\n\nKomutlar:\n/start\n/btc\n/help"
+    )
+
+# /help
+@bot.message_handler(commands=['help'])
+def help_cmd(message):
+    bot.reply_to(
+        message,
+        "📌 Kullanılabilir komutlar:\n\n/btc → BTC fiyatı\n/eth → ETH fiyatı"
+    )
+
+# Anahtar kelime: merhaba, selam
+@bot.message_handler(func=lambda message: message.text.lower() in ["merhaba", "selam", "hello"])
+def greeting(message):
+    bot.reply_to(message, "👋 Merhaba! Sana piyasa verileri sunabilirim 📊")
+
+# BTC yazılırsa
+@bot.message_handler(func=lambda message: "btc" in message.text.lower())
+def btc_text(message):
+    bot.reply_to(message, "📈 BTC fiyatını istiyorsun. Yakında canlı veri gelecek!")
+
+# Fallback – anlamazsa
+@bot.message_handler(func=lambda message: True)
+def fallback(message):
+    bot.reply_to(
+        message,
+        "🤖 Bunu anlayamadım.\n\nKomutlar:\n/start\n/btc\n/help"
     )
 
 def run_bot():
