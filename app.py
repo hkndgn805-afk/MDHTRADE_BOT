@@ -8,17 +8,17 @@ BOT_TOKEN = os.environ.get("BOT_TOKEN")
 bot = telebot.TeleBot(BOT_TOKEN)
 app = Flask(__name__)
 
-# START KOMUTU
+# /start komutu
 @bot.message_handler(commands=['start'])
 def start(message):
     bot.reply_to(message, "🤖 MDH Trade Bot çalışıyor!")
 
-# TÜM MESAJLAR
+# HER MESAJ (merhaba, selam, vs.)
 @bot.message_handler(func=lambda message: True)
 def all_messages(message):
     bot.reply_to(
         message,
-        "🤖 MDH Trade Bot çalışıyor!\n\nKomutlar:\n/start\n/btc"
+        "👋 Merhaba!\n\n🤖 MDH Trade Bot aktif.\n\nKomutlar:\n/start\n/btc"
     )
 
 def run_bot():
