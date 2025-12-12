@@ -35,7 +35,8 @@ def btc_handler(message):
             parse_mode="Markdown"
         )
     except Exception as e:
-        bot.reply_to(message, f"⚠️ Fiyat alınamadı.\nHata: {str(e)}")
+    bot.reply_to(message, f"⚠️ Fiyat alınamadı.\nHata: {str(e)}")
+
 
 
 # Selamlaşma
