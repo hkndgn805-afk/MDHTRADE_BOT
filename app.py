@@ -9,7 +9,6 @@ import time
 btc_cache = {"price": None, "time": 0}
 
 def get_btc_price_cached():
-    import time
     global btc_cache
     try:
         if time.time() - btc_cache["time"] > 20 or btc_cache["price"] is None:
@@ -22,14 +21,14 @@ def get_btc_price_cached():
     except Exception as e:
         # Eğer API 429 veya başka hata verirse, eski fiyatı kullan
         if btc_cache["price"] is None:
-            raise e  # cache yoksa hatayı göster
+            raise e
     return btc_cache["price"]
 
 BOT_TOKEN = os.environ.get("BOT_TOKEN")
 bot = telebot.TeleBot(BOT_TOKEN)
 app = Flask(__name__)
 
-# /start
+# 1️⃣ /start handler
 @bot.message_handler(commands=['start'])
 def start(message):
     bot.reply_to(
@@ -37,7 +36,12 @@ def start(message):
         "🤖 MDH Trade Bot aktif!\n\nKomutlar:\n/btc\n/help"
     )
 
-# Hem /btc hem sadece "btc" için
+# 2️⃣ Selamlaşma handler
+@bot.message_handler(func=lambda message: message.text and message.text.lower().strip() in ["merhaba", "selam", "naber"])
+def greeting(message):
+    bot.reply_to(message, "👋 Merhaba! Sana piyasa verileri sunabilirim.")
+
+# 3️⃣ BTC handler
 @bot.message_handler(func=lambda message: message.text and message.text.lower().strip() in ["/btc", "btc"])
 def btc_handler(message):
     try:
@@ -50,12 +54,7 @@ def btc_handler(message):
     except Exception as e:
         bot.reply_to(message, f"⚠️ Fiyat alınamadı.\nHata: {str(e)}")
 
-# Selamlaşma
-@bot.message_handler(func=lambda message: message.text and message.text.lower().strip() in ["merhaba", "selam", "naber"])
-def greeting(message):
-    bot.reply_to(message, "👋 Merhaba! Sana piyasa verileri sunabilirim.")
-
-# Fallback
+# 4️⃣ Fallback handler
 @bot.message_handler(func=lambda message: True)
 def fallback(message):
     bot.reply_to(
