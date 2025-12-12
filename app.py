@@ -2,6 +2,18 @@ from flask import Flask
 import telebot
 import os
 import threading
+import requests
+
+
+def get_btc_price():
+    url = "https://api.coingecko.com/api/v3/simple/price"
+    params = {
+        "ids": "bitcoin",
+        "vs_currencies": "usd"
+    }
+    response = requests.get(url, params=params)
+    data = response.json()
+    return data["bitcoin"]["usd"]
 
 BOT_TOKEN = os.environ.get("BOT_TOKEN")
 
@@ -18,8 +30,17 @@ def start(message):
 
 # /btc komutu
 @bot.message_handler(commands=['btc'])
-def btc_command(message):
-    bot.reply_to(message, "📈 BTC fiyatı yakında canlı olarak gelecek!")
+def btc_price(message):
+    try:
+        price = get_btc_price()
+        bot.reply_to(
+            message,
+            f"📈 *Bitcoin (BTC)*\n\n💰 Fiyat: *${price}*",
+            parse_mode="Markdown"
+        )
+    except:
+        bot.reply_to(message, "⚠️ Fiyat alınamadı, tekrar dene.")
+
 
 # BTC kelimesi yazılırsa
 @bot.message_handler(func=lambda message: message.text and message.text.lower() == "btc")
