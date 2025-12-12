@@ -9,15 +9,20 @@ import time
 btc_cache = {"price": None, "time": 0}
 
 def get_btc_price_cached():
+    import time
     global btc_cache
-    # Eğer son güncellenme 10 saniye önceyse API'ye git
-    if time.time() - btc_cache["time"] > 10:
-        url = "https://api.coingecko.com/api/v3/simple/price"
-        params = {"ids": "bitcoin", "vs_currencies": "usd"}
-        response = requests.get(url, params=params, timeout=10)
-        response.raise_for_status()
-        btc_cache["price"] = response.json()["bitcoin"]["usd"]
-        btc_cache["time"] = time.time()
+    try:
+        if time.time() - btc_cache["time"] > 20 or btc_cache["price"] is None:
+            url = "https://api.coingecko.com/api/v3/simple/price"
+            params = {"ids": "bitcoin", "vs_currencies": "usd"}
+            response = requests.get(url, params=params, timeout=10)
+            response.raise_for_status()
+            btc_cache["price"] = response.json()["bitcoin"]["usd"]
+            btc_cache["time"] = time.time()
+    except Exception as e:
+        # Eğer API 429 veya başka hata verirse, eski fiyatı kullan
+        if btc_cache["price"] is None:
+            raise e  # cache yoksa hatayı göster
     return btc_cache["price"]
 
 BOT_TOKEN = os.environ.get("BOT_TOKEN")
